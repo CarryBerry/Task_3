@@ -13,9 +13,9 @@ namespace Task_3.Classes
         public DateTime TimeStartCall { get; set; }
         public DateTime TimeEndCall { get; set; }
 
-        public CallInfo(PhoneNumber myNumber, PhoneNumber targetNumber, DateTime beginCall, DateTime endCall)
+        public CallInfo(PhoneNumber number, PhoneNumber targetNumber, DateTime beginCall, DateTime endCall)
         {
-            CallerNumber = myNumber;
+            CallerNumber = number;
             TargetNumber = targetNumber;
             TimeStartCall = beginCall;
             TimeEndCall = endCall;

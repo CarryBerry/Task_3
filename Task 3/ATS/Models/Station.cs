@@ -4,20 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Task_3.Billing_System.Classes;
 using Task_3.EventHandlers;
 
 namespace Task_3.Classes
 {
     public class Station : IStation
     {
+        private Billing Billing { get; }
+        public delegate void SentData(BillingCallInfo callInfo);
+        public event SentData SentDataEvent;
+
         private readonly CallingInteraction interaction = new CallingInteraction();
         private readonly IDictionary<PhoneNumber, IPort> usersData;
         private CallInfo callInfo;
 
-        public Station()
+        public Station(Billing billing)
         {
+            Billing = billing;
             usersData = new Dictionary<PhoneNumber, IPort>();
             callInfo = new CallInfo();
+            SentDataEvent += Billing.AddCallInfo;
         }
 
         public CallInfo GetInfoList()
@@ -81,7 +88,7 @@ namespace Task_3.Classes
 
                         targetPort.AnswerCall(answerArgs.Number, answerArgs.TargetNumber, answerArgs.CurrentState);
                         
-                        Thread.Sleep(3000);
+                        Thread.Sleep(4000);
                         info.TimeEndCall = DateTime.Now;
                         GetCallTime();
                     }
@@ -112,6 +119,8 @@ namespace Task_3.Classes
                             targetPort.AnswerCall(endArgs.Number, endArgs.TargetNumber, RespondState.Decline);
                             GetCallTime();
                         }
+                        SentDataEvent?.Invoke(new BillingCallInfo(GetInfoList().CallerNumber, GetInfoList().TargetNumber
+                            , GetInfoList().TimeStartCall, GetInfoList().TimeEndCall));
                     }
                 }
                 else
